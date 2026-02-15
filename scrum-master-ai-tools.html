@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tools for Scrum Masters</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --bg-dark: #0a0f1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1f2937;
+            --bg-surface: #0d1321;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #1f2937;
+            --border-light: #374151;
+            --success: #10b981;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(10, 15, 26, 0.98);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .logo-icon {
+            width: 32px; height: 32px;
+            background: var(--gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 57px; left: 0;
+            width: 260px;
+            height: calc(100vh - 57px);
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1rem 0;
+            transition: transform 0.3s ease;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+        .nav-section { padding: 0.75rem 1rem; }
+        .nav-section-title {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            padding-left: 0.75rem;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            margin: 2px 0;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 450;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .nav-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .nav-item.active { background: rgba(99, 102, 241, 0.15); color: var(--primary-light); }
+        .nav-icon { width: 18px; font-size: 0.875rem; color: var(--text-muted); }
+        .main {
+            margin-left: 260px;
+            margin-top: 57px;
+            padding: 2rem;
+            padding-bottom: 5rem;
+            min-height: calc(100vh - 57px);
+            max-width: 1200px;
+        }
+        .hero {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gradient);
+        }
+        .hero h1 { font-size: 1.875rem; font-weight: 700; margin-bottom: 0.75rem; }
+        .hero p { font-size: 1rem; color: var(--text-secondary); line-height: 1.7; }
+        .section { display: none; animation: fadeIn 0.25s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-header h2 { font-size: 1.375rem; font-weight: 600; }
+        .section-icon {
+            width: 40px; height: 40px;
+            background: var(--bg-card-hover);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--primary-light);
+        }
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .tool-card:hover { border-color: var(--border-light); }
+        .tool-header {
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .tool-header:hover { background: var(--bg-card-hover); }
+        .tool-title-area { display: flex; align-items: center; gap: 0.75rem; }
+        .tool-title { font-size: 0.9375rem; font-weight: 550; color: var(--text-primary); }
+        .tool-link {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .tool-link:hover { background: var(--primary-dark); }
+        .tool-toggle { font-size: 0.75rem; color: var(--text-muted); transition: transform 0.2s ease; }
+        .tool-card.open .tool-toggle { transform: rotate(180deg); }
+        .tool-content { padding: 0; max-height: 0; overflow: hidden; transition: all 0.3s ease; }
+        .tool-card.open .tool-content { padding: 0 1.25rem 1.25rem; max-height: 3000px; }
+        .tool-description { color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.875rem; line-height: 1.6; }
+        .prompt-code {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .prompt-code-header {
+            background: rgba(255,255,255,0.03);
+            padding: 0.625rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .prompt-code-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+        .copy-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+            padding: 0.375rem 0.75rem;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        .copy-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .copy-btn.copied { background: var(--success); color: white; border-color: var(--success); }
+        .prompt-code pre {
+            padding: 1rem;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.8125rem;
+            color: #e6edf3;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.55;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .tag {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-light);
+            padding: 0.25rem 0.625rem;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            font-weight: 550;
+        }
+        .tag.free { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .tag.paid { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .tag.freemium { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 0.875rem;
+        }
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .category-card:hover { border-color: var(--border-light); background: var(--bg-card-hover); }
+        .category-icon {
+            width: 42px; height: 42px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--primary-light);
+        }
+        .category-info h4 { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+        .category-info p { font-size: 0.75rem; color: var(--text-muted); }
+        .overlay { display: none; position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 998; }
+        .overlay.open { display: block; }
+        .footer {
+            position: fixed;
+            bottom: 0; left: 260px; right: 0;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8125rem;
+            z-index: 100;
+        }
+        .footer-info { color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; }
+        .footer-info i { color: var(--primary-light); }
+        .footer-info strong { color: var(--text-primary); }
+        .footer-link { color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .footer-link:hover { text-decoration: underline; }
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); z-index: 999; }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; max-width: 100%; }
+            .nav-toggle { display: flex; }
+            .footer { left: 0; }
+        }
+        @media (max-width: 640px) {
+            .header-content { padding: 0.75rem 1rem; }
+            .main { padding: 1.25rem; padding-bottom: 6rem; }
+            .hero { padding: 2rem 1.5rem; }
+            .hero h1 { font-size: 1.5rem; }
+            .footer { flex-direction: column; gap: 0.5rem; padding: 0.75rem 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-toolbox"></i></div>
+                <span>AI Tools for Scrum Masters</span>
+            </div>
+            <button class="nav-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        </div>
+    </header>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="nav-section">
+            <div class="nav-section-title">Menu</div>
+            <a class="nav-item active" onclick="showSection('home', this)">
+                <i class="nav-icon fas fa-home"></i> Home
+            </a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Tool Categories</div>
+            <a class="nav-item" onclick="showSection('cat1', this)">
+                <i class="nav-icon fas fa-brain"></i> AI Assistants
+            </a>
+            <a class="nav-item" onclick="showSection('cat2', this)">
+                <i class="nav-icon fas fa-microphone-alt"></i> Transcription
+            </a>
+            <a class="nav-item" onclick="showSection('cat3', this)">
+                <i class="nav-icon fas fa-project-diagram"></i> Project Management
+            </a>
+            <a class="nav-item" onclick="showSection('cat4', this)">
+                <i class="nav-icon fas fa-chalkboard"></i> Collaboration
+            </a>
+            <a class="nav-item" onclick="showSection('cat5', this)">
+                <i class="nav-icon fas fa-chart-line"></i> Metrics & Analytics
+            </a>
+            <a class="nav-item" onclick="showSection('cat6', this)">
+                <i class="nav-icon fas fa-sync-alt"></i> Retrospectives
+            </a>
+            <a class="nav-item" onclick="showSection('cat7', this)">
+                <i class="nav-icon fas fa-bolt"></i> Automation
+            </a>
+            <a class="nav-item" onclick="showSection('cat8', this)">
+                <i class="nav-icon fas fa-file-alt"></i> Documentation
+            </a>
+            <a class="nav-item" onclick="showSection('cat9', this)">
+                <i class="nav-icon fas fa-heart-pulse"></i> Team Wellbeing
+            </a>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- Home -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>AI Tool Stack for Scrum Masters</h1>
+                    <p>A curated catalog of AI-powered tools organized by function. Each tool includes a description, practical use case, and pricing tier. Build your own AI exoskeleton.</p>
+                </div>
+            </div>
+
+            <div class="category-grid">
+                <div class="category-card" onclick="showSection('cat1', document.querySelectorAll('.nav-item')[1])">
+                    <div class="category-icon"><i class="fas fa-brain"></i></div>
+                    <div class="category-info">
+                        <h4>AI Assistants (LLMs)</h4>
+                        <p>ChatGPT, Claude, Gemini, Copilot</p>
+                    </div>
+                </div>
+                <div class="category-card" onclick="showSection('cat2', document.querySelectorAll('.nav-item')[2])">
+                    <div class="category-icon"><i class="fas fa-microphone-alt"></i></div>
+                    <div class="category-info">
+                        <h4>Transcription & Notes</h4>
+                        <p>Otter, Fireflies, Spinach, Grain</p>
+                    </div>
+                </div>
+                <div class="category-card" onclick="showSection('cat3', document.querySelectorAll('.nav-item')[3])">
+                    <div class="category-icon"><i class="fas fa-project-diagram"></i></div>
+                    <div class="category-info">
+                        <h4>Project Management</h4>
+                        <p>Jira AI, Linear, Shortcut</p>
+                    </div>
+                </div>
+                <div class="category-card" onclick="showSection('cat4', document.querySelectorAll('.nav-item')[4])">
+                    <div class="category-icon"><i class="fas fa-chalkboard"></i></div>
+                    <div class="category-info">
+                        <h4>Collaboration & Workshops</h4>
+                        <p>Miro AI, FigJam, Mural</p>
+                    </div>
+                </div>
+                <div class="category-card" onclick="showSection('cat5', document.querySelectorAll('.nav-item')[5])">
+                    <div class="category-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="category-info">
+                        <h4>Metrics & Analytics</h4>
+                        <p>LinearB, Plandek, Haystack, Jellyfish</p>
+                    </div>
+                </div>
+                <div class="category-card" onclick="showSection('cat6', document.querySelectorAll('.nav-item')[6])">
+                    <div class="category-icon"><i class="fas fa-sync-alt"></i></div>
+                    <div class="category-info">
+                        <h4>Retrospectives</h4>
+                        <p>Retrium, Parabol, TeamRetro</p>
+                    </div>
+                </div>
+                <div class="category-card" onclick="showSection('cat7', document.querySelectorAll('.nav-item')[7])">
+                    <div class="category-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="category-info">
+                        <h4>Automation & Async</h4>
+                        <p>Geekbot, Zapier, Slack Workflows</p>
+                    </div>
+                </div>
+                <div class="category-card" onclick="showSection('cat8', document.querySelectorAll('.nav-item')[8])">
+                    <div class="category-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="category-info">
+                        <h4>Documentation & Knowledge</h4>
+                        <p>Notion AI, Confluence AI, Gamma</p>
+                    </div>
+                </div>
+                <div class="category-card" onclick="showSection('cat9', document.querySelectorAll('.nav-item')[9])">
+                    <div class="category-icon"><i class="fas fa-heart-pulse"></i></div>
+                    <div class="category-info">
+                        <h4>Team Wellbeing</h4>
+                        <p>TeamMood, Officevibe, Viva Insights</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 1: AI Assistants -->
+        <section id="cat1" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-brain"></i></div>
+                <h2>AI Assistants (LLMs)</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">ChatGPT (OpenAI)</span>
+                        <a href="https://chat.openai.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">The most widely adopted LLM. GPT-4o offers strong reasoning, code interpretation, and image analysis. Custom GPTs let you create pre-configured assistants for recurring tasks like retro planning or story analysis.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">SM Use Case</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Key features for Scrum Masters:
+- Custom GPTs for recurring ceremony design
+- Code Interpreter for analyzing sprint data (CSV uploads)
+- DALL-E for creating visual facilitation boards
+- Memory feature to retain team context across sessions
+- Canvas mode for collaborative document editing
+
+Best for: Story refinement, retro design, coaching prep, data analysis</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $20/mo</span>
+                        <span class="tag">Cognitive Layer</span>
+                        <span class="tag">General Purpose</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Claude (Anthropic)</span>
+                        <a href="https://claude.ai" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Known for nuanced reasoning, longer context windows (200K tokens), and strong performance on complex analytical tasks. Excels at processing large documents like meeting transcripts and multi-sprint data. Projects feature maintains context across conversations.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">SM Use Case</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Key features for Scrum Masters:
+- 200K context window — paste entire sprint backlogs or long transcripts
+- Projects — save team context, DoD, and ceremony templates for reuse
+- Artifacts — generates standalone documents, tables, and code
+- Strong coaching simulation and conflict resolution scenarios
+- Less prone to "sycophantic" responses — gives honest feedback
+
+Best for: Deep analysis, long documents, coaching prep, honest assessments</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $20/mo</span>
+                        <span class="tag">Cognitive Layer</span>
+                        <span class="tag">Deep Analysis</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Gemini (Google)</span>
+                        <a href="https://gemini.google.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Google's AI model deeply integrated with Google Workspace (Docs, Sheets, Slides, Gmail, Meet). If your organization uses Google Workspace, Gemini is the fastest path to AI-augmented productivity because it works inside tools you already use daily.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">SM Use Case</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Key features for Scrum Masters:
+- Summarize long email threads in Gmail
+- Auto-generate meeting notes in Google Meet
+- Analyze sprint data directly in Google Sheets
+- Create sprint review presentations in Slides
+- Deep Search across your entire Google Drive
+
+Best for: Google Workspace users, email triage, meeting summaries</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $20/mo</span>
+                        <span class="tag">Cognitive Layer</span>
+                        <span class="tag">Workspace Integration</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Microsoft Copilot</span>
+                        <a href="https://copilot.microsoft.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Microsoft's AI integrated with Microsoft 365 (Teams, Outlook, Word, Excel, PowerPoint). Generates meeting summaries in Teams, drafts emails in Outlook, and analyzes data in Excel. The enterprise choice for organizations already on the Microsoft stack.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">SM Use Case</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Key features for Scrum Masters:
+- Teams meeting recap: decisions, action items, follow-ups
+- Outlook: summarize email threads, draft stakeholder updates
+- Excel: analyze sprint data with natural language queries
+- PowerPoint: generate Sprint Review presentations from data
+- Copilot Studio: build custom agents for team-specific workflows
+
+Best for: Microsoft 365 organizations, Teams-heavy workflows</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag paid">$30/user/mo</span>
+                        <span class="tag">Cognitive Layer</span>
+                        <span class="tag">Enterprise</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 2: Transcription -->
+        <section id="cat2" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-microphone-alt"></i></div>
+                <h2>Meeting Transcription & AI Notes</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Spinach.ai</span>
+                        <a href="https://spinach.ai" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Purpose-built AI Scrum Master assistant. Joins your meetings, takes notes, identifies action items, and can even update Jira tickets automatically. Designed specifically for agile teams — not a generic transcription tool.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Spinach.ai for Scrum Masters:
+1. Joins Zoom/Teams/Meet meetings as an AI participant
+2. Generates structured meeting summaries (decisions, blockers, actions)
+3. Auto-updates Jira/Linear/Asana tickets from meeting discussions
+4. Tracks action items across meetings — flags overdue items
+5. Suggests standup improvements based on patterns
+6. Integrates with Slack for async distribution
+
+Killer feature: "Smart Suggest" — recommends agenda items
+based on unresolved blockers from previous meetings</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $9/mo</span>
+                        <span class="tag">Agile-Specific</span>
+                        <span class="tag">Jira Integration</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Otter.ai</span>
+                        <a href="https://otter.ai" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Real-time AI transcription with speaker identification. OtterPilot joins meetings automatically, generates summaries, and allows you to search across all past meetings. Strong free tier for getting started.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Otter.ai for Scrum Masters:
+1. Real-time transcription with speaker identification
+2. OtterPilot auto-joins and records meetings
+3. AI Chat — ask questions about any past meeting
+4. Action item extraction and assignment
+5. Search across all meeting transcripts
+6. Slides capture — detects and captures presentation slides
+
+Pro tip: After a Sprint Review, ask Otter Chat:
+"What feedback did stakeholders give about the dashboard feature?"</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $17/mo</span>
+                        <span class="tag">General Purpose</span>
+                        <span class="tag">Searchable</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Fireflies.ai</span>
+                        <a href="https://fireflies.ai" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">AI meeting assistant with strong CRM and project tool integrations. Sentiment analysis detects tension in meetings. Topic tracker shows how much time is spent on each agenda item — perfect for optimizing ceremony length.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Fireflies.ai for Scrum Masters:
+1. Sentiment analysis — detect frustration or excitement in meetings
+2. Topic tracking — see exactly how much time per agenda item
+3. AI-powered search across all historical meetings
+4. Custom vocabulary training for your team's jargon
+5. Integrations: Jira, Asana, Trello, HubSpot, Slack, Notion
+6. Thread intelligence — track how topics evolve across meetings
+
+Killer feature: "Meeting analytics" dashboard showing talk-time
+distribution — see who dominates and who stays silent</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $18/mo</span>
+                        <span class="tag">Sentiment Analysis</span>
+                        <span class="tag">Analytics</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Grain</span>
+                        <a href="https://grain.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">AI meeting recorder focused on shareable highlights. Create short video clips from meetings and share them with stakeholders who missed the session. Great for Sprint Reviews and demos.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Grain for Scrum Masters:
+1. Auto-record and transcribe meetings
+2. Create shareable video highlight clips
+3. AI summaries with key moments tagged
+4. Shared workspace for team meeting library
+5. Integrations with Slack, Notion, HubSpot
+
+Best for: Sharing Sprint Review highlights with
+stakeholders who couldn't attend</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $19/mo</span>
+                        <span class="tag">Video Clips</span>
+                        <span class="tag">Async Sharing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 3: Project Management -->
+        <section id="cat3" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-project-diagram"></i></div>
+                <h2>AI-Powered Project Management</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Jira + Atlassian Intelligence</span>
+                        <a href="https://atlassian.com/software/jira" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Jira's AI layer adds natural language search, smart sprint recommendations, and predictive analytics. Ask questions about your backlog in plain English. AI suggests optimal sprint loads based on historical data and identifies at-risk stories.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">AI Features</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Atlassian Intelligence in Jira:
+1. Natural language JQL — "Show me all bugs assigned to Team A this sprint"
+2. Smart Sprint suggestions — AI recommends sprint capacity
+3. AI summaries for epic-level progress reports
+4. Automated issue creation from Confluence pages or Slack messages
+5. Predictive completion dates based on team velocity patterns
+6. Change risk detection — flags stories at risk of carryover
+
+Pro tip: Use AI to generate sprint reports directly from Jira data
+instead of manually compiling spreadsheets</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag paid">From $8.15/user/mo</span>
+                        <span class="tag">Execution Layer</span>
+                        <span class="tag">Industry Standard</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Linear</span>
+                        <a href="https://linear.app" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Modern project management built for speed. Linear's AI auto-categorizes issues, suggests labels, detects duplicates, and generates project updates. Loved by developer teams for its clean UX and keyboard-first design — minimal Jira-janitor overhead.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">AI Features</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Linear AI features:
+1. Auto-triage — AI categorizes and labels new issues
+2. Duplicate detection — prevents backlog bloat
+3. AI-generated project summaries and status updates
+4. Smart workflows with automated state transitions
+5. Cycle analytics — built-in flow metrics without plugins
+6. Slack/GitHub deep integration
+
+Why SMs love it: Less time configuring workflows,
+more time coaching. The tool gets out of your way.</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $8/user/mo</span>
+                        <span class="tag">Execution Layer</span>
+                        <span class="tag">Developer-Loved</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Shortcut (formerly Clubhouse)</span>
+                        <a href="https://shortcut.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Project management designed for product teams with built-in roadmapping. AI assists with writing stories, summarizing epics, and generating progress reports. A strong middle ground between Jira's complexity and Linear's minimalism.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">AI Features</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Shortcut AI features:
+1. AI story writing assistant — generates descriptions and criteria
+2. Epic summarization — auto-generate stakeholder updates
+3. Integrated roadmap view connecting stories to strategy
+4. Iteration analytics with velocity and cycle time
+5. Slack integration for async updates
+6. Doc hub — built-in wiki connected to stories
+
+Best for: Teams that need both backlog management
+AND roadmap visibility in one tool</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $8.50/user/mo</span>
+                        <span class="tag">Execution Layer</span>
+                        <span class="tag">Roadmapping</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 4: Collaboration -->
+        <section id="cat4" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-chalkboard"></i></div>
+                <h2>Collaboration & Visual Workshops</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Miro + Miro Assist</span>
+                        <a href="https://miro.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">The leading visual collaboration platform with Miro Assist AI. Auto-clusters sticky notes by theme, generates summaries, and creates visual structures from text prompts. Transforms passive retros into engaging visual workshops.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Miro Assist for SMs</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Miro Assist AI features:
+1. Auto-cluster — groups hundreds of sticky notes by theme instantly
+2. Summarize — generates key takeaways from workshop boards
+3. Generate — creates mind maps, flowcharts, and diagrams from text
+4. Expand — adds ideas to brainstorming sessions
+5. User story mapping templates with AI-assisted grouping
+6. Built-in voting, timer, and facilitation tools
+
+Retro hack: Have the team add stickies for 5 minutes,
+then use Miro Assist to cluster and summarize. You just
+saved 20 minutes of manual grouping.</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $8/user/mo</span>
+                        <span class="tag">Collaboration Layer</span>
+                        <span class="tag">Visual Workshops</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">FigJam (Figma)</span>
+                        <a href="https://figma.com/figjam" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Figma's collaborative whiteboard with AI features. Clean, fast, and popular with design-adjacent teams. AI generates diagrams, organizes brainstorms, and summarizes discussions. Tight integration with Figma if your team uses it for design.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>FigJam for Scrum Masters:
+1. AI-powered sorting and clustering of sticky notes
+2. Auto-generate flowcharts and diagrams
+3. Built-in templates for retros, standups, and planning
+4. Stamps, emojis, and reactions for async engagement
+5. Tight Figma integration — link designs to stories
+6. Generous free tier for small teams
+
+Best for: Teams already using Figma, or teams that
+want a simpler alternative to Miro</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $5/user/mo</span>
+                        <span class="tag">Collaboration Layer</span>
+                        <span class="tag">Design Teams</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 5: Metrics & Analytics -->
+        <section id="cat5" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-chart-line"></i></div>
+                <h2>Engineering Metrics & Flow Analytics</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">LinearB</span>
+                        <a href="https://linearb.io" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Software delivery intelligence platform. Connects to Git, Jira, and CI/CD to measure DORA metrics, cycle time, PR review times, and developer workload. Gives SMs objective data to replace opinions with evidence when talking to management.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Metrics Available</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>LinearB metrics for Scrum Masters:
+1. DORA metrics — Deployment Frequency, Lead Time, CFR, MTTR
+2. Cycle Time breakdown — Coding, Review, Merge, Deploy
+3. PR pickup time — how long PRs wait for first review
+4. Review depth — are reviews thorough or rubber-stamped?
+5. Work breakdown — planned vs. unplanned vs. rework
+6. Investment balance — new features vs. tech debt vs. bugs
+7. Team workload distribution — spot overloaded individuals
+
+Why it matters: When management asks "Why can't we go faster?",
+show them the data. Cycle time tells the truth.</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + Paid</span>
+                        <span class="tag">Observability Layer</span>
+                        <span class="tag">DORA Metrics</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Plandek</span>
+                        <a href="https://plandek.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Delivery analytics platform that connects to Jira, Azure DevOps, GitHub, and CI/CD pipelines. Provides flow metrics, forecasting, and executive-ready dashboards. Strong at multi-team views for organizations with several squads.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Plandek for Scrum Masters:
+1. Flow metrics with bottleneck visualization
+2. Predictive delivery forecasting — "Will we finish by date X?"
+3. Multi-team dashboards for portfolio-level visibility
+4. Sprint analytics with automated trend detection
+5. Customizable executive reports
+6. Agile maturity scoring across teams
+
+Best for: Organizations with 5+ teams that need
+portfolio-level delivery intelligence</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag paid">Enterprise Pricing</span>
+                        <span class="tag">Observability Layer</span>
+                        <span class="tag">Forecasting</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Jellyfish</span>
+                        <a href="https://jellyfish.co" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Engineering management platform that connects engineering work to business outcomes. Shows where engineering effort is being invested (new features, maintenance, tech debt) and whether it aligns with company priorities.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Jellyfish for Scrum Masters:
+1. Allocation analysis — % of time on features vs. debt vs. bugs
+2. Business alignment — maps engineering work to strategic goals
+3. Cost analysis — understand the cost of each initiative
+4. Cross-team dependency visibility
+5. Board-ready engineering investment reports
+
+Best for: SMs who want to speak the CFO's language
+and prove ROI on engineering investment</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag paid">Enterprise Pricing</span>
+                        <span class="tag">Observability Layer</span>
+                        <span class="tag">Business Alignment</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 6: Retrospectives -->
+        <section id="cat6" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-sync-alt"></i></div>
+                <h2>Retrospective Tools</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Retrium</span>
+                        <a href="https://retrium.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">The most comprehensive retrospective platform. Multiple formats, anonymous input, structured voting, and action item tracking across sprints. AI assists with grouping themes and suggests retro formats based on team patterns.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Retrium for Scrum Masters:
+1. 10+ built-in retro formats (4Ls, Start/Stop/Continue, Lean Coffee, etc.)
+2. Anonymous mode — psychological safety for honest feedback
+3. Dot voting with time limits
+4. Action item tracking ACROSS retros — never lose follow-ups
+5. Health radar — visual team health assessment over time
+6. AI theme grouping and sentiment analysis
+7. Admin dashboard showing retro trends across teams
+
+Killer feature: Action item persistence. Items from Sprint N
+automatically appear in Sprint N+1's retro as accountability checks.</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag paid">From $29/team/mo</span>
+                        <span class="tag">Retro-Specific</span>
+                        <span class="tag">Action Tracking</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Parabol</span>
+                        <a href="https://parabol.co" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Open-source agile meeting tool covering retros, standups, and estimation. AI generates discussion topics, groups reflections, and summarizes outcomes. Free for up to 2 teams — strong option for budget-conscious organizations.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Parabol for Scrum Masters:
+1. Retros, standups, and sprint poker in one tool
+2. AI-generated discussion topics and grouping
+3. Integrated timer for timeboxing
+4. Jira/GitHub integration for story estimation
+5. Open source — self-host for full data control
+6. Generous free tier (2 teams, unlimited members)
+
+Best for: Teams that want retros + standups + estimation
+in one tool without enterprise pricing</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $6/user/mo</span>
+                        <span class="tag">Open Source</span>
+                        <span class="tag">Multi-Ceremony</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">TeamRetro</span>
+                        <a href="https://teamretro.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Guided retrospective and team health check platform. Facilitator mode guides you step-by-step through the retro process. Includes team health radar with historical tracking and team agreement boards.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>TeamRetro for Scrum Masters:
+1. Guided facilitation mode — step-by-step retro flow
+2. Health check with historical tracking and trends
+3. Team agreements board — living working agreements
+4. Anonymous brainstorming with smart grouping
+5. Action tracking with Jira/Azure DevOps sync
+6. Engagement analytics — participation rates over time
+
+Best for: New SMs who want guided facilitation,
+or teams that need structured health monitoring</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag paid">From $25/team/mo</span>
+                        <span class="tag">Guided Facilitation</span>
+                        <span class="tag">Health Checks</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 7: Automation -->
+        <section id="cat7" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-bolt"></i></div>
+                <h2>Automation & Async Communication</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Geekbot</span>
+                        <a href="https://geekbot.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Async standup bot for Slack and Microsoft Teams. Collects structured updates at scheduled times, compiles reports, and flags blockers. The #1 tool for replacing status-update standups with async text check-ins.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Setup Guide</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Geekbot async standup setup:
+1. Install in Slack or Teams
+2. Configure questions:
+   - "What will you focus on today?"
+   - "Any blockers or risks?"
+   - "Anything the team should know?"
+3. Set schedule: Daily at 9:00 AM team timezone
+4. Set response deadline: 9:30 AM
+5. Auto-post summary to team channel
+
+Pro tip: Add a weekly Friday question:
+"Rate your week 1-5 and one word to describe it"
+— instant pulse survey, zero extra tools</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $3.50/user/mo</span>
+                        <span class="tag">Async Standups</span>
+                        <span class="tag">Slack/Teams</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Zapier</span>
+                        <a href="https://zapier.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">No-code automation platform connecting 6,000+ apps. Build workflows that eliminate manual tasks: auto-create Jira tickets from Slack messages, sync meeting notes to Confluence, or trigger sprint reports on a schedule.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">SM Automation Ideas</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Zapier automations for Scrum Masters:
+
+1. Slack message → Jira ticket
+   "When someone posts in #bugs channel, create a Jira bug"
+
+2. Sprint end → Automated report
+   "Every other Friday, export Jira data and email summary"
+
+3. PR merged → Slack notification
+   "When PR merges to main, notify #releases channel"
+
+4. Calendar event → Prep reminder
+   "1 hour before Retro, send me the prep checklist"
+
+5. New Jira blocker → Manager alert
+   "When a story is flagged as blocked, DM the SM and PO"
+
+6. Otter transcript → Confluence page
+   "After every meeting, save notes to Confluence automatically"</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $20/mo</span>
+                        <span class="tag">No-Code</span>
+                        <span class="tag">6000+ Integrations</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Slack Workflow Builder</span>
+                        <a href="https://slack.com/features/workflow-automation" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Built-in Slack automation for creating custom workflows without code. Create standup bots, approval processes, and data collection forms. If your team already uses Slack, this is the zero-cost automation starting point.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">SM Workflow Ideas</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Slack Workflow ideas for Scrum Masters:
+
+1. Daily async standup
+   Trigger: Schedule (9 AM) → Form: 3 questions → Post to channel
+
+2. Impediment escalation
+   Trigger: Emoji reaction (🚫) on message → DM to SM + create Jira ticket
+
+3. Sprint retrospective input collector
+   Trigger: Friday 3 PM → Form: What went well / What didn't → Save to channel
+
+4. New team member onboarding
+   Trigger: User joins channel → Send welcome message with links to DoD, ceremonies calendar, team norms
+
+5. Meeting decision logger
+   Trigger: Slash command /decision → Form → Post to #decisions channel</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag free">Included with Slack</span>
+                        <span class="tag">No-Code</span>
+                        <span class="tag">Zero Cost</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 8: Documentation -->
+        <section id="cat8" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-file-alt"></i></div>
+                <h2>Documentation & Knowledge Management</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Notion AI</span>
+                        <a href="https://notion.so" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">All-in-one workspace with AI writing, summarization, and Q&A built in. Create team wikis, meeting notes databases, and sprint documentation. AI can answer questions about your entire workspace — "What did we decide about the API in last week's retro?"</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">SM Use Cases</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Notion AI for Scrum Masters:
+1. Q&A over your entire wiki — "What is our Definition of Done?"
+2. Auto-summarize meeting notes into action items
+3. Generate sprint reports from structured databases
+4. Fill databases — AI extracts data from text into tables
+5. Translate documents for distributed teams
+6. Template everything — retro notes, sprint docs, 1:1 agendas
+
+Setup: Create a "Team Operating System" in Notion with:
+- Ceremonies calendar + templates
+- Retro history database
+- Action item tracker
+- Team health radar
+- Prompt library (link to your prompts page)</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $10/user/mo</span>
+                        <span class="tag">All-in-One</span>
+                        <span class="tag">Team Wiki</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Confluence + Atlassian Intelligence</span>
+                        <a href="https://atlassian.com/software/confluence" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Enterprise wiki with AI features. If your org uses Jira, Confluence is the natural documentation layer. AI summarizes pages, generates content, and answers questions across your entire knowledge base.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">AI Features</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Confluence AI for Scrum Masters:
+1. AI page summarization — TL;DR for long documents
+2. Natural language search across all spaces
+3. Auto-generate meeting notes from templates
+4. Smart links to Jira issues — live status updates in docs
+5. AI writing assistant for process documentation
+6. Whiteboards with AI for visual collaboration
+
+Best for: Jira-centric organizations that need a
+tightly integrated documentation layer</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag paid">From $6.05/user/mo</span>
+                        <span class="tag">Enterprise</span>
+                        <span class="tag">Jira Integration</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Gamma</span>
+                        <a href="https://gamma.app" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">AI-powered presentation and document creator. Describe what you need and Gamma generates a polished presentation in seconds. Perfect for creating Sprint Review decks, stakeholder updates, and training materials without touching PowerPoint.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">SM Use Cases</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Gamma for Scrum Masters:
+1. Sprint Review presentations in 2 minutes
+2. Stakeholder update decks from bullet points
+3. Team onboarding materials
+4. Process documentation with visual layouts
+5. Training decks for AI tool adoption
+6. Quarterly report visualizations
+
+Prompt example: "Create a 5-slide Sprint Review presentation.
+Sprint Goal: Improve checkout flow. Achieved: Yes.
+Key metrics: Conversion up 12%, load time down 40%.
+3 stories completed, 0 carryover. Next sprint focus: payments."</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $10/mo</span>
+                        <span class="tag">Presentations</span>
+                        <span class="tag">No Design Skills</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 9: Team Wellbeing -->
+        <section id="cat9" class="section">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-heart-pulse"></i></div>
+                <h2>Team Wellbeing & Pulse Surveys</h2>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">TeamMood</span>
+                        <a href="https://teammood.com" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Daily mood tracking for teams. One question per day, anonymous responses, trend visualization over time. Detects declining morale before it becomes a crisis. Simple, non-intrusive, and effective.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>TeamMood for Scrum Masters:
+1. Daily anonymous mood check (emoji + optional comment)
+2. Trend visualization — spot declining patterns over weeks
+3. Team segmentation — compare moods across teams
+4. Feedback tags — categorize comments by theme
+5. Slack/Teams/Email integration
+6. Export data for analysis with AI prompts
+
+How to use with AI: Export 4 weeks of TeamMood data,
+feed it to the Team Health prompt from the Playbook,
+and get an AI-powered burnout risk assessment.
+
+Response rate tip: Keep it to ONE question. Teams
+stop responding when surveys get longer than 30 seconds.</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free trial + $2/user/mo</span>
+                        <span class="tag">Pulse Surveys</span>
+                        <span class="tag">Anonymous</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Officevibe (Workleap)</span>
+                        <a href="https://workleap.com/officevibe" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Employee engagement platform with automated pulse surveys, eNPS tracking, and 1:1 meeting tools. Goes deeper than mood tracking — measures 10 engagement metrics including recognition, growth, feedback, and relationship with manager.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Officevibe for Scrum Masters:
+1. Automated weekly pulse surveys (5 questions, 2 minutes)
+2. 10 engagement metrics: recognition, growth, feedback, etc.
+3. Anonymous feedback channel — team can raise concerns safely
+4. 1:1 meeting agenda builder with talking point suggestions
+5. eNPS tracking — employee Net Promoter Score over time
+6. Manager dashboard with team health insights
+
+Best for: SMs who also handle people management
+responsibilities or work closely with engineering managers</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag freemium">Free + $5/user/mo</span>
+                        <span class="tag">Engagement</span>
+                        <span class="tag">1:1 Support</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header" onclick="toggleCard(this)">
+                    <div class="tool-title-area">
+                        <span class="tool-title">Microsoft Viva Insights</span>
+                        <a href="https://microsoft.com/en-us/microsoft-viva/insights" target="_blank" class="tool-link" onclick="event.stopPropagation()">Visit</a>
+                    </div>
+                    <i class="tool-toggle fas fa-chevron-down"></i>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">Workplace analytics powered by Microsoft 365 data. Analyzes meeting patterns, collaboration habits, and focus time — without reading content. Shows who is in too many meetings, who is isolated, and which teams are at burnout risk based on behavioral signals.</p>
+                    <div class="prompt-code">
+                        <div class="prompt-code-header">
+                            <span class="prompt-code-label">Key Capabilities</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>Viva Insights for Scrum Masters:
+1. Meeting time analysis — who spends too much time in meetings
+2. Focus time tracking — are developers getting deep work blocks?
+3. After-hours work patterns — burnout early warning
+4. Network analysis — identify isolated team members
+5. Collaboration patterns — who works with whom
+6. Manager insights — are you spending enough time with each report?
+
+Privacy note: Viva Insights analyzes metadata (calendar, email
+volume, Teams activity) but NEVER reads content. Individual
+data is visible only to the individual. Managers see aggregated
+team-level data only.
+
+Best for: Microsoft 365 organizations (data is already there)</pre>
+                    </div>
+                    <div class="tags">
+                        <span class="tag paid">Part of M365 E3+</span>
+                        <span class="tag">Behavioral Analytics</span>
+                        <span class="tag">Enterprise</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function showSection(sectionId, navItem) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if (navItem) navItem.classList.add('active');
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('open');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function toggleCard(header) { header.parentElement.classList.toggle('open'); }
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('open');
+        }
+        function copyToClipboard(btn) {
+            const code = btn.closest('.prompt-code').querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+
+    <footer class="footer">
+        <div class="footer-info">
+            <i class="fas fa-toolbox"></i>
+            <span>From <strong>The AI-Agile Playbook</strong> | 30+ Curated AI Tools</span>
+        </div>
+        <a href="https://linkedin.com/in/joaoallisson" target="_blank" class="footer-link">
+            <i class="fab fa-linkedin"></i> linkedin.com/in/joaoallisson
+        </a>
+    </footer>
+</body>
+</html>
