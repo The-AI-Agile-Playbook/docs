@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI-Agile Playbook — Digital Companion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --bg-dark: #0a0f1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1f2937;
+            --bg-surface: #0d1321;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #1f2937;
+            --border-light: #374151;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 15, 26, 0.98);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.025em;
+        }
+        .logo-icon {
+            width: 32px; height: 32px;
+            background: var(--gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+        .header-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .header-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 450;
+            transition: color 0.15s;
+        }
+        .header-links a:hover { color: var(--text-primary); }
+
+        /* Main */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 5rem 1.5rem 4rem;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 0 3rem;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: var(--primary-light);
+            padding: 0.375rem 1rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero h1 span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3); }
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+        .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--primary-light); }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 3rem 0;
+        }
+        .stat {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        .stat-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            letter-spacing: -0.02em;
+        }
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 4rem;
+        }
+        .resource-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .resource-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+        .resource-card:hover::before { opacity: 1; }
+        .resource-icon {
+            width: 48px; height: 48px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--primary-light);
+        }
+        .resource-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        .resource-card p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .resource-meta {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: auto;
+        }
+        .resource-tag {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-light);
+            padding: 0.25rem 0.625rem;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            font-weight: 550;
+        }
+
+        /* About the Book */
+        .about {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gradient);
+        }
+        .about h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        .about-item h4 {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .about-item h4 i { color: var(--primary-light); font-size: 0.875rem; }
+        .about-item p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* Week Overview */
+        .weeks {
+            margin-bottom: 4rem;
+        }
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        .week-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        .week-card:hover { border-color: var(--border-light); }
+        .week-number {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary-light);
+            margin-bottom: 0.5rem;
+        }
+        .week-card h4 {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .week-days {
+            list-style: none;
+        }
+        .week-days li {
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            padding: 0.25rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .week-days li::before {
+            content: '';
+            width: 4px; height: 4px;
+            background: var(--border-light);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+        }
+        .footer-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-info {
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-info strong { color: var(--text-secondary); }
+        .footer-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-link:hover { text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-subtitle { font-size: 1rem; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .resources-grid { grid-template-columns: 1fr; }
+            .about-grid { grid-template-columns: 1fr; }
+            .week-grid { grid-template-columns: repeat(2, 1fr); }
+            .header-links { display: none; }
+            .footer-content { flex-direction: column; gap: 0.75rem; }
+        }
+        @media (max-width: 480px) {
+            .main { padding: 4rem 1rem 3rem; }
+            .hero { padding: 2rem 0; }
+            .hero h1 { font-size: 1.75rem; }
+            .week-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+                <span>AI-Agile Playbook</span>
+            </a>
+            <div class="header-links">
+                <a href="#about">About</a>
+                <a href="#resources">Resources</a>
+                <a href="#curriculum">Curriculum</a>
+                <a href="scrum-master-prompts-lib.html">Prompt Library</a>
+                <a href="scrum-master-ai-tools.html">AI Tools</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-badge">
+                <i class="fas fa-fire"></i> 20-Day Transformation Program
+            </div>
+            <h1>The AI-Agile <span>Playbook</span></h1>
+            <p class="hero-subtitle">A survival guide for Scrum Masters who refuse to become obsolete. 20 days. 20 AI-powered protocols. Zero fluff. Maximum impact.</p>
+            <div class="hero-cta">
+                <a href="scrum-master-prompts-lib.html" class="btn btn-primary">
+                    <i class="fas fa-terminal"></i> Browse Prompt Library
+                </a>
+                <a href="scrum-master-ai-tools.html" class="btn btn-secondary">
+                    <i class="fas fa-toolbox"></i> Explore AI Tools
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">20</div>
+                <div class="stat-label">Action Modules</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">30+</div>
+                <div class="stat-label">Master Prompts</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">30+</div>
+                <div class="stat-label">AI Tools Reviewed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Weeks to Transform</div>
+            </div>
+        </div>
+
+        <!-- Digital Resources -->
+        <div id="resources">
+            <h2 class="section-title">Digital Companion Resources</h2>
+            <p class="section-desc">The book teaches the logic. These resources give you the tools to execute.</p>
+
+            <div class="resources-grid">
+                <a href="scrum-master-prompts-lib.html" class="resource-card">
+                    <div class="resource-icon"><i class="fas fa-terminal"></i></div>
+                    <h3>AI Prompt Library</h3>
+                    <p>31 battle-tested prompts organized in 11 categories. Copy, customize, and deploy. From identity audits to 90-day transformation plans. Every prompt from the book plus exclusive extras.</p>
+                    <div class="resource-meta">
+                        <span class="resource-tag">31 Prompts</span>
+                        <span class="resource-tag">11 Categories</span>
+                        <span class="resource-tag">Copy & Paste</span>
+                    </div>
+                </a>
+                <a href="scrum-master-ai-tools.html" class="resource-card">
+                    <div class="resource-icon"><i class="fas fa-toolbox"></i></div>
+                    <h3>AI Tool Catalog</h3>
+                    <p>30+ curated AI tools for Scrum Masters organized by function. Each tool includes a description, practical use case for SMs, and pricing tier. Build your AI exoskeleton layer by layer.</p>
+                    <div class="resource-meta">
+                        <span class="resource-tag">30+ Tools</span>
+                        <span class="resource-tag">9 Categories</span>
+                        <span class="resource-tag">Pricing Included</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- About the Book -->
+        <div id="about" class="about">
+            <h2>What Is This Book?</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.7;">This is not a book you read on the couch. It is a <strong style="color: var(--text-primary);">workbook</strong> you bring to work. Each of the 20 modules follows a rigid 6-page structure designed to move you from diagnosis to action in a single day. The blank spaces are the product. If you skip them, you paid for a paperweight.</p>
+
+            <div class="about-grid">
+                <div class="about-item">
+                    <h4><i class="fas fa-crosshairs"></i> The Problem</h4>
+                    <p>The traditional Scrum Master role is under siege. AI can transcribe meetings, write stories, analyze metrics, and generate retro formats faster than you can open Jira. The administrative tasks that fill 80% of your week are being automated. The question is not whether AI takes your job — it is whether you use AI to finally do your real job.</p>
+                </div>
+                <div class="about-item">
+                    <h4><i class="fas fa-lightbulb"></i> The Solution</h4>
+                    <p>In 20 days, you audit your identity, automate the bureaucracy, redesign every ceremony, build metrics dashboards, navigate organizational politics with data, coach through difficult conversations, and reposition yourself as a Strategic Enabler. Every module includes an AI Master Prompt, a case study, and interactive exercises.</p>
+                </div>
+                <div class="about-item">
+                    <h4><i class="fas fa-user-tie"></i> Who It Is For</h4>
+                    <p>Experienced Scrum Masters who hate abstract theory and want tactical, deployable techniques. If you have ever been called a "Jira Janitor" or felt like a "meeting secretary with a fancy title," this book was written for you. No fluff. No "In today's world..." Just solutions.</p>
+                </div>
+                <div class="about-item">
+                    <h4><i class="fas fa-cube"></i> The Format</h4>
+                    <p>8.5" x 11" Workbook. 20 Modules (4 Weeks x 5 Days). Each module = 6 pages: Theory, Protocol with Master Prompt, Case Study with ROI data, Planning Canvas, Execution Checklist, and Captain's Log for reflection. Write in it. That is the point.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Curriculum -->
+        <div id="curriculum" class="weeks">
+            <h2 class="section-title">The 4-Week Curriculum</h2>
+            <p class="section-desc">Each week has a theme. Each day has a mission. By Day 20, you are a different professional.</p>
+
+            <div class="week-grid">
+                <div class="week-card">
+                    <div class="week-number">Week 1</div>
+                    <h4>Audit & Reinvention</h4>
+                    <ul class="week-days">
+                        <li>Identity Audit</li>
+                        <li>Anti-Pattern Mapping</li>
+                        <li>Tech Stack Setup</li>
+                        <li>Prompt Engineering</li>
+                        <li>First Automation</li>
+                    </ul>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 2</div>
+                    <h4>Ceremonies Reimagined</h4>
+                    <ul class="week-days">
+                        <li>Blocker-First Daily</li>
+                        <li>AI-Augmented Refinement</li>
+                        <li>Retros That Produce Change</li>
+                        <li>Evidence-Based Planning</li>
+                        <li>Decision-Driven Review</li>
+                    </ul>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 3</div>
+                    <h4>Metrics & Influence</h4>
+                    <ul class="week-days">
+                        <li>DORA Flow Metrics</li>
+                        <li>Data-Driven Impediment Removal</li>
+                        <li>Team Health Analysis</li>
+                        <li>Stakeholder Navigation</li>
+                        <li>Intelligence Dashboard</li>
+                    </ul>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 4</div>
+                    <h4>Scaling & Sustainability</h4>
+                    <ul class="week-days">
+                        <li>Coaching with AI Support</li>
+                        <li>Cross-Team Dependencies</li>
+                        <li>Community of Practice</li>
+                        <li>Personal Brand Building</li>
+                        <li>90-Day Plan & Manifesto</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <i class="fas fa-book" style="color: var(--primary-light);"></i>
+                <span>The AI-Agile Playbook &mdash; Digital Companion</span>
+            </div>
+            <a href="https://linkedin.com/in/joaoallisson" target="_blank" class="footer-link">
+                <i class="fab fa-linkedin"></i> linkedin.com/in/joaoallisson
+            </a>
+        </div>
+    </footer>
+</body>
+</html>
